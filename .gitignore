@@ -1,0 +1,15 @@
+# product
+__pycache__
+
+# env
+.vscode
+.venv
+
+# log
+log.txt
+
+# input file
+origin.txt
+
+# config
+config.py
