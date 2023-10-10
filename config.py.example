@@ -7,6 +7,9 @@
 @Desc    :   config.py
 """
 
+
+import subprocess
+
 import redis
 
 DEBUG_MODULE = True
@@ -27,3 +30,10 @@ REFRESH_EXTRA_TIME = -1  # 刷新所有token
 
 # datetime格式
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
+
+# 代理，针对 wsl2 配置
+output = subprocess.check_output(
+    'cat /etc/resolv.conf | grep "nameserver" | cut -f 2 -d " "', shell=True
+)
+host_ip = output.decode().strip()
+PROXY = f"http://{host_ip}:7890"

@@ -33,7 +33,7 @@ python main.py
 `crontab` 配置定时任务
     
 ```shell
-0 12 * * * cd /path/to/your/project && source .venv/bin/activate && python refresh.py
+0 12 * * * cd /path/to/your/project && /path/to/your/project/.venv/bin/python /path/to/your/project/refresh.py
 ```
 
 > `refresh.py` 需要直连 `openai` ，也可参考 [fakeopen提供接口](https://github.com/zhile-io/pandora/blob/master/doc/fakeopen.md#3-authrefresh) 自行更改。

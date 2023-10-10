@@ -9,7 +9,7 @@
 
 import requests
 
-from config import REFRESH_EXTRA_TIME
+from config import PROXY, REFRESH_EXTRA_TIME
 from custom_log import logger
 from redis_cache import get_need_refresh_tokens, set_to_redis
 
@@ -25,6 +25,9 @@ def refresh_token():
         "client_id": "pdlLIX2Y72MIl2rhLhTE9VV9bN905kBh",
     }
     session = requests.Session()
+    if PROXY:
+        proxies = {"https": PROXY, "http": PROXY}
+        session.proxies = proxies
     for user, token in get_need_refresh_tokens(REFRESH_EXTRA_TIME):
         refresh_token = token["refresh_token"]
         payload["refresh_token"] = refresh_token
