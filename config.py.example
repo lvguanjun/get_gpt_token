@@ -37,3 +37,6 @@ output = subprocess.check_output(
 )
 host_ip = output.decode().strip()
 PROXY = f"http://{host_ip}:7890"
+
+# share token 唯一标识
+SHARE_TOKEN_UNIQUE_NAME = "xxxx"

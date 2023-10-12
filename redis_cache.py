@@ -58,7 +58,31 @@ def get_need_refresh_tokens(extra_time: int = 0) -> list:
             continue
         if (
             datetime.datetime.now() + datetime.timedelta(seconds=extra_time)
-            > expire_time
+            < expire_time
         ):
             need_refresh_tokens.append((user, token))
     return need_refresh_tokens
+
+
+def get_all_token(extra_time: int = 0) -> list:
+    """
+    获取所有token
+
+    @param extra_time: 提前过期时间，如果小于0，则获取所有token
+    """
+    all_tokens = []
+    for user in redis_cli.keys("*==*"):
+        token = redis_cli.get(user)
+        token = json.loads(token)
+        access_token = token["access_token"]
+        expire_time = token["expired_time"]
+        expire_time = datetime.datetime.strptime(expire_time, DATETIME_FORMAT)
+        if extra_time < 0:
+            all_tokens.append(access_token)
+            continue
+        if (
+            datetime.datetime.now() + datetime.timedelta(seconds=extra_time)
+            < expire_time
+        ):
+            all_tokens.append(access_token)
+    return all_tokens
