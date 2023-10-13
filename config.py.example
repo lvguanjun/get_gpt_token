@@ -40,3 +40,6 @@ PROXY = f"http://{host_ip}:7890"
 
 # share token 唯一标识
 SHARE_TOKEN_UNIQUE_NAME = "xxxx"
+
+# 需要更新的 pool token，为 None 则生成新的 pool token
+POOL_TOKEN = "pk-***"

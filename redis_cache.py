@@ -12,11 +12,12 @@ import json
 from typing import Optional
 
 from config import DATETIME_FORMAT, TOKEN_EXPIRE_EXTRA_TIME, redis_cli
-from utils import Encoder, is_jwt_expired, format_jwt_expired_time
+from utils import Encoder, format_jwt_expired_time, is_jwt_expired
 
 
 def set_to_redis(key: str, value: dict):
     format_jwt_expired_time(value)
+    value["user"] = key
     value = json.dumps(value, cls=Encoder)
     redis_cli.set(key, value)
 
@@ -51,11 +52,11 @@ def get_need_refresh_tokens(extra_time: int = 0) -> list:
         token = json.loads(token)
         if token.get("change_password"):
             continue
-        expire_time = token["expired_time"]
-        expire_time = datetime.datetime.strptime(expire_time, DATETIME_FORMAT)
         if extra_time < 0:
             need_refresh_tokens.append((user, token))
             continue
+        expire_time = token["expired_time"]
+        expire_time = datetime.datetime.strptime(expire_time, DATETIME_FORMAT)
         if (
             datetime.datetime.now() + datetime.timedelta(seconds=extra_time)
             < expire_time
@@ -74,15 +75,37 @@ def get_all_token(extra_time: int = 0) -> list:
     for user in redis_cli.keys("*==*"):
         token = redis_cli.get(user)
         token = json.loads(token)
-        access_token = token["access_token"]
+        if extra_time < 0:
+            all_tokens.append(token)
+            continue
         expire_time = token["expired_time"]
         expire_time = datetime.datetime.strptime(expire_time, DATETIME_FORMAT)
-        if extra_time < 0:
-            all_tokens.append(access_token)
-            continue
         if (
             datetime.datetime.now() + datetime.timedelta(seconds=extra_time)
             < expire_time
         ):
-            all_tokens.append(access_token)
+            all_tokens.append(token)
     return all_tokens
+
+
+def get_survive_share_token() -> list:
+    """
+    获取所有幸存的的share_token
+    """
+    survive_tokens = []
+    for user in redis_cli.keys("*==*"):
+        token = redis_cli.get(user)
+        token = json.loads(token)
+        if all(
+            [
+                not token.get("change_password"),
+                not token.get("deactivated"),
+            ]
+        ):
+            survive_tokens.append(token["share_token"])
+    return survive_tokens, len(survive_tokens)
+
+
+if __name__ == "__main__":
+    survive_tokens, count = get_survive_share_token()
+    print(f"{survive_tokens=}", f"{count=}", sep="\n")
