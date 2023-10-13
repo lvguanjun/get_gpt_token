@@ -25,7 +25,7 @@ def get_share_token(token):
         "access_token": token["access_token"],
         "site_limit": "",
         "expires_in": 0,
-        "show_conversations": False,
+        "show_conversations": True,
         "show_userinfo": True,
     }
 
