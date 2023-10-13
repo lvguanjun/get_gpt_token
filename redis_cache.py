@@ -11,7 +11,7 @@ import datetime
 import json
 from typing import Optional
 
-from config import DATETIME_FORMAT, TOKEN_EXPIRE_EXTRA_TIME, redis_cli
+from config import DATETIME_FORMAT, TOKEN_EXPIRE_EXTRA_TIME, gpt3_redis_cli, redis_cli
 from utils import Encoder, format_jwt_expired_time, is_jwt_expired
 
 
@@ -20,6 +20,13 @@ def set_to_redis(key: str, value: dict):
     value["user"] = key
     value = json.dumps(value, cls=Encoder)
     redis_cli.set(key, value)
+
+
+def set_to_gpt3_redis(key: str, value: dict):
+    format_jwt_expired_time(value)
+    value["user"] = key
+    value = json.dumps(value, cls=Encoder)
+    gpt3_redis_cli.set(key, value)
 
 
 def get_from_redis(key: str) -> Optional[dict]:

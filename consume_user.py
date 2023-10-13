@@ -19,6 +19,7 @@ from redis_cache import (
     get_from_redis,
     is_in_error_set,
     set_error_to_redis,
+    set_to_gpt3_redis,
     set_to_redis,
 )
 
@@ -51,6 +52,24 @@ def get_token(user_name, password) -> dict:
     raise Exception(f"{response.status_code=}, {response.text=}")
 
 
+def check_is_gpt4(token):
+    url = "https://ai.fakeopen.com/api/models"
+
+    headers = {"Authorization": f"Bearer {token}"}
+
+    try:
+        response = requests.request("GET", url, headers=headers)
+        if response.status_code == 200:
+            categories = response.json()["categories"]
+            for category in categories:
+                if category["category"] == "gpt_4":
+                    return True
+            return False
+        raise Exception(f"{response.status_code=}, {response.text=}")
+    except Exception as e:
+        raise Exception(f"{e=}")
+
+
 def consume_user(q: Queue, sleep_time: int = 0):
     while True:
         user = q.get()
@@ -65,6 +84,11 @@ def consume_user(q: Queue, sleep_time: int = 0):
             continue
         try:
             res: dict = get_token(user_name, password)
+            if not check_is_gpt4(res["access_token"]):
+                set_to_gpt3_redis(f"{user_name}=={password}", res)
+                set_error_to_redis(f"{user_name}=={password}")
+                logger.info(f"{user_name} not gpt4")
+                continue
             set_to_redis(f"{user_name}=={password}", res)
             logger.info(f"{user_name} add to redis")
         except AccountInvalidException:

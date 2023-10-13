@@ -22,6 +22,9 @@ redis_config = {
 }
 redis_cli = redis.Redis(**redis_config)
 
+gpt3_redis_cli = redis.Redis(**redis_config)
+gpt3_redis_cli.select(2)
+
 # token提前过期时间
 TOKEN_EXPIRE_EXTRA_TIME = 432000  # 5天
 

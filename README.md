@@ -38,6 +38,12 @@ python main.py
 
 > `refresh.py` 需要直连 `openai` ，也可参考 [fakeopen提供接口](https://github.com/zhile-io/pandora/blob/master/doc/fakeopen.md#3-authrefresh) 自行更改。
 
+### 部分脚本作用
+
+- `refresh.py`：定时刷新 token ，且校验密码是否更改
+- `gen_share_token.py`：生成 share_token & pool_token ，且校验账号是否有效
+- `redis_cache.py`：redis 缓存相关，可获取指定要求 token ，例如未改密码，账号有效等
+
 ## 3. 参考
 
 1. [如何获取access token](https://zhile.io/2023/05/19/how-to-get-chatgpt-access-token-via-pkce.html)
