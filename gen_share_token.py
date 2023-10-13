@@ -36,7 +36,6 @@ def get_share_token(token):
         share_token = response.json()["token_key"]
         token["share_token"] = share_token
         set_to_redis(token["user"], token)
-        logger.info(f"get share token success")
         return share_token
     else:
         logger.error(
@@ -112,6 +111,6 @@ def gen_pool_token(share_tokens: list, pool_token: str = None):
 
 if __name__ == "__main__":
     cur_count, err_count, share_token = main()
-    pool_token = gen_pool_token(share_token, POOL_TOKEN)
-    print(f"{cur_count=}, {err_count=}, {pool_token=}")
-    # print(f"{cur_count=}, {err_count=}, {share_token=}")
+    # pool_token = gen_pool_token(share_token, POOL_TOKEN)
+    # print(f"{cur_count=}, {err_count=}, {pool_token=}")
+    print(f"{cur_count=}, {err_count=}, {share_token=}")
