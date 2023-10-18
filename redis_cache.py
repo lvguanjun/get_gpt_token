@@ -95,7 +95,7 @@ def get_all_token(extra_time: int = 0) -> list:
     return all_tokens
 
 
-def get_survive_share_token() -> list:
+def get_survive_share_token(extra_time: int = 0) -> list:
     """
     获取所有幸存的的share_token
     """
@@ -103,6 +103,13 @@ def get_survive_share_token() -> list:
     for user in redis_cli.keys("*==*"):
         token = redis_cli.get(user)
         token = json.loads(token)
+        expire_time = token["expired_time"]
+        expire_time = datetime.datetime.strptime(expire_time, DATETIME_FORMAT)
+        if (
+            datetime.datetime.now() + datetime.timedelta(seconds=extra_time)
+            > expire_time
+        ):
+            continue
         if all(
             [
                 not token.get("change_password"),
