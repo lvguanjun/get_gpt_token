@@ -53,11 +53,13 @@ def check_share_token(share_token):
 
     if response.status_code == 200:
         return True
-    if (
-        response.status_code == 401
-        and "Your OpenAI account has been deactivated" in response.text
+    if response.status_code == 401 and any(
+        [
+            "Your OpenAI account has been deactivated" in response.text,
+            "Your authentication token has expired." in response.text,
+        ]
     ):
-        logger.error(f"account has been deactivated")
+        logger.error(f"account has been deactivated or token has expired")
         return False
     logger.error(
         f"check share token exceptd, {response.status_code=}, {response.text=}"
