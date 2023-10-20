@@ -88,6 +88,7 @@ def consume_user(q: Queue, sleep_time: int = 0):
                 set_to_gpt3_redis(f"{user_name}=={password}", res)
                 set_error_to_redis(f"{user_name}=={password}")
                 logger.info(f"{user_name} not gpt4")
+                time.sleep(sleep_time)
                 continue
             set_to_redis(f"{user_name}=={password}", res)
             logger.info(f"{user_name} add to redis")
