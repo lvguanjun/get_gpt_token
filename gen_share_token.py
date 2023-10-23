@@ -45,7 +45,7 @@ def get_share_token(token):
 
 
 def check_share_token(share_token):
-    url = "https://ai.fakeopen.com/api/conversations"
+    url = "https://ai.fakeopen.com/api/models"
 
     headers = {"Authorization": f"Bearer {share_token}"}
 
