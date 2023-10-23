@@ -16,7 +16,7 @@ DEBUG_MODULE = True
 
 redis_config = {
     "host": "127.0.0.1",
-    "db": 2,
+    "db": 1,
     "port": 6379,
     "decode_responses": True,
 }
@@ -34,7 +34,7 @@ REFRESH_EXTRA_TIME = -1  # 刷新所有token
 # datetime格式
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 
-# 代理，针对 wsl2 配置
+# 代理，针对 wsl2 配置，个人无需配置设置为 None 即可
 output = subprocess.check_output(
     'cat /etc/resolv.conf | grep "nameserver" | cut -f 2 -d " "', shell=True
 )
