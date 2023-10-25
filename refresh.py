@@ -16,6 +16,7 @@ import requests
 from config import PROXY, REFRESH_EXTRA_TIME
 from custom_log import logger
 from redis_cache import get_need_refresh_tokens, set_to_redis
+from session_refresh import session_refresh
 
 
 class TokenRefresher:
@@ -49,11 +50,26 @@ class TokenRefresher:
             logger.error(f"{response.status_code=}, {response.text=}")
             return None
 
+    def get_new_token_from_session(self, session_token):
+        response = session_refresh(session_token)
+        if response.status_code == 200:
+            return response.json()
+        elif self.is_changed_password(response):
+            return {"change_password": True}
+        else:
+            logger.error(f"{response.status_code=}, {response.text=}")
+            return None
+
     def refresh_user_token(self, user, token):
-        refresh_token = token["refresh_token"]
-        update_token = self.get_new_token(refresh_token)
+        if refresh_token := token.get("refresh_token"):
+            update_token = self.get_new_token(refresh_token)
+        elif session_token := token.get("session_token"):
+            update_token = self.get_new_token_from_session(session_token)
+        else:
+            logger.error(f"no refresh_token or session_token, {user=}")
+            return
         if update_token is not None:
-            if "refresh_token" not in update_token:
+            if update_token == {"change_password": True}:
                 token["change_password"] = True
                 set_to_redis(user, token)
                 logger.info(f"user change password, {user=}")

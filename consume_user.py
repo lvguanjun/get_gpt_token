@@ -46,6 +46,7 @@ def get_token(user_name, password) -> dict:
         [
             "wrong email or password" in response.text,
             "it has been deleted or deactivated" in response.text,
+            "wrong username or password" in response.text,
         ]
     ):
         raise AccountInvalidException
