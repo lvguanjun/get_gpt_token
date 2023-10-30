@@ -14,8 +14,8 @@ from queue import Queue
 import threading
 
 if __name__ == "__main__":
-    # 请求限速3/min"
-    sleep_time = 25
+    # 请求限速6/min"
+    sleep_time = 11
     file = "origin.txt"
     q = Queue()
     p_t = threading.Thread(target=product_user, args=(file, q))
