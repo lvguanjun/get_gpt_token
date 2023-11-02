@@ -43,6 +43,8 @@ python main.py
 - `refresh.py`：定时刷新 token ，且校验密码是否更改
 - `gen_share_token.py`：生成 share_token & pool_token ，且校验账号是否有效
 - `redis_cache.py`：redis 缓存相关，可获取指定要求 token ，例如未改密码，账号有效等
+- `pool_token.py`：基于存活的 share_token 快速生成 pool_token
+- `other.py`：其他脚本，例如批量检测是否4，是否存在订阅分享等
 
 ## 3. 参考
 
