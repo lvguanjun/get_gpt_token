@@ -76,6 +76,23 @@ def send_gpt3_to_redis2(share_token):
     redis_cli.delete(key)
 
 
+def check_all_tools(token):
+    url = "https://ai.fakeopen.com/api/models"
+
+    headers = {"Authorization": f"Bearer {token}"}
+
+    try:
+        response = requests.request("GET", url, headers=headers)
+        if response.status_code == 200:
+            categories = response.text
+            if "All Tools" in categories:
+                return True
+            return False
+        raise Exception(f"{response.status_code=}, {response.text=}")
+    except Exception as e:
+        raise Exception(f"{e=}")
+
+
 if __name__ == "__main__":
     active_tokens = get_active_token()
     batch_check_is_gpt4(active_tokens)
