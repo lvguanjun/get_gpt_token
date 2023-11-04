@@ -88,9 +88,8 @@ def check_all_tools(token):
             if "All Tools" in categories:
                 return True
             return False
-        raise Exception(f"{response.status_code=}, {response.text=}")
     except Exception as e:
-        raise Exception(f"{e=}")
+        print(e)
 
 
 if __name__ == "__main__":
