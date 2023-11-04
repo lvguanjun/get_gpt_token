@@ -94,6 +94,11 @@ def check_all_tools(token):
 
 if __name__ == "__main__":
     active_tokens = get_active_token()
+
+    # for token in active_tokens:
+    #     if check_all_tools(token):
+    #         print(from_share_token_get_user(token))
+
     batch_check_is_gpt4(active_tokens)
     batch_check_invite(active_tokens)
     # send_gpt4_to_redis1("fk-zuFrj9ayZ0HaZKn9Xh4zzCA_hA")
