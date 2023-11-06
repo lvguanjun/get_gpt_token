@@ -127,7 +127,7 @@ def from_share_token_get_user(share_token: str, redis_cli=redis_cli) -> Optional
     for user in redis_cli.keys("*==*"):
         token = redis_cli.get(user)
         token = json.loads(token)
-        if token["share_token"] == share_token:
+        if token.get("share_token") == share_token:
             return user
     return None
 
