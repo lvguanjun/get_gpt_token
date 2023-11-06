@@ -14,21 +14,48 @@ from queue import Queue
 from custom_log import logger
 
 
+def error_handler(func):
+    def wrapper(line):
+        try:
+            return func(line)
+        except Exception as e:
+            logger.error(f"{line=}\n{e=}")
+            return iter([])
+
+    return wrapper
+
+
+@error_handler
+def deal_json(line):
+    line = json.loads(line)
+    return ((item["username"], item["password"]) for item in line)
+
+
+@error_handler
+def deal_4_line(line):
+    user, password = line.split("----", 1)
+    return iter([(user, password)])
+
+
 def product_user(file: str, q: Queue):
     processed = set()
     with open(file, "r") as f:
-        for line in f.readlines():
-            try:
-                line = json.loads(line)
-                user_name = line[0]["username"]
-                password = line[0]["password"]
-                if (user_name, password) in processed:
-                    continue
-                q.put((user_name, password))
-                processed.add((user_name, password))
-            except Exception as e:
-                logger.error(f"{line=}\n{e=}")
+        for line in f:
+            line = line.strip()
+            if not line:
                 continue
+            if "----" in line:
+                for item in deal_4_line(line):
+                    if item in processed:
+                        continue
+                    q.put(item)
+                    processed.add(item)
+            else:
+                for item in deal_json(line):
+                    if item in processed:
+                        continue
+                    q.put(item)
+                    processed.add(item)
     q.put(None)
     logger.info("queue add None, end")
 
