@@ -97,6 +97,7 @@ if __name__ == "__main__":
 
     # for token in active_tokens:
     #     if check_all_tools(token):
+    #         print(token)
     #         print(from_share_token_get_user(token))
 
     batch_check_is_gpt4(active_tokens)
