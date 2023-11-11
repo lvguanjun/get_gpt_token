@@ -92,6 +92,27 @@ def check_all_tools(token):
         print(e)
 
 
+def get_conversions(token: str, offest: int = 0, show_all: bool = False):
+    url = f"https://ai.fakeopen.com/api/conversations?offset={offest}"
+
+    limit = 50
+
+    headers = {"Authorization": f"Bearer {token}"}
+
+    response = requests.request("GET", url, headers=headers)
+
+    if response.status_code != 200:
+        return None
+
+    data = response.json()
+    for item in data["items"]:
+        if item["title"] != "New chat":
+            yield item["title"]
+    if show_all:
+        if offest + limit < data["total"]:
+            yield from get_conversions(token, offest + limit, show_all)
+
+
 if __name__ == "__main__":
     active_tokens = get_active_token()
 
@@ -99,6 +120,10 @@ if __name__ == "__main__":
     #     if check_all_tools(token):
     #         print(token)
     #         print(from_share_token_get_user(token))
+
+    # for token in active_tokens:
+    #     for title in get_conversions(token, show_all=True):
+    #         print(title)
 
     batch_check_is_gpt4(active_tokens)
     batch_check_invite(active_tokens)
