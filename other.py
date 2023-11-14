@@ -61,7 +61,12 @@ def batch_check_invite(share_tokens):
 
 
 def send_gpt4_to_redis1(share_token):
+    sure = input("do you sure now it is gpt4 redis?? y or n: ")
+    if sure != "y":
+        print("thanks")
+        return
     key = from_share_token_get_user(share_token, gpt3_redis_cli)
+    print(key)
     value = gpt3_redis_cli.get(key)
     value = json.loads(value)
     set_to_redis(key, value)
@@ -69,7 +74,12 @@ def send_gpt4_to_redis1(share_token):
 
 
 def send_gpt3_to_redis2(share_token):
+    sure = input("do you sure now it is gpt4 redis?? y or n: ")
+    if sure != "y":
+        print("thanks")
+        return
     key = from_share_token_get_user(share_token)
+    print(key)
     value = redis_cli.get(key)
     value = json.loads(value)
     set_to_gpt3_redis(key, value)
@@ -127,4 +137,4 @@ if __name__ == "__main__":
 
     batch_check_is_gpt4(active_tokens)
     batch_check_invite(active_tokens)
-    # send_gpt4_to_redis1("fk-zuFrj9ayZ0HaZKn9Xh4zzCA_hA")
+    # send_gpt4_to_redis1("fk-uTT1JTWO8LkTl9HKK")
