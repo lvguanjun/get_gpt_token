@@ -1,4 +1,4 @@
-# product
+# cache
 __pycache__
 
 # env
@@ -13,3 +13,6 @@ origin.txt
 
 # config
 config.py
+
+# output
+effective_tokens.txt
