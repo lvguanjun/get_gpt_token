@@ -123,6 +123,18 @@ def get_conversions(token: str, offest: int = 0, show_all: bool = False):
             yield from get_conversions(token, offest + limit, show_all)
 
 
+def get_user_system_messages(token):
+    url = "https://ai.fakeopen.com/api/user_system_messages"
+
+    headers = {"Authorization": f"Bearer {token}"}
+
+    response = requests.request("GET", url, headers=headers)
+
+    if response.status_code != 200:
+        return None
+    return response.json()
+
+
 if __name__ == "__main__":
     active_tokens = get_active_token()
 
@@ -135,6 +147,9 @@ if __name__ == "__main__":
     #     for title in get_conversions(token, show_all=True):
     #         print(title)
 
+    # for token in active_tokens:
+    #     print(get_user_system_messages(token))
+
     batch_check_is_gpt4(active_tokens)
-    batch_check_invite(active_tokens)
+    # batch_check_invite(active_tokens)
     # send_gpt4_to_redis1("fk-uTT1JTWO8LkTl9HKK")
