@@ -18,8 +18,16 @@ def get_share_token_session_token_map():
         token = redis_cli.get(user)
         token = json.loads(token)
         if share_token := token.get("share_token"):
-            if session_token := token.get("session_token"):
+            if session_token := token.get("session_token") or token.get(
+                "refresh_token"
+            ):
                 share_token_session_token_map[share_token] = session_token
+                continue
+        print(
+            f'invalid token: {token.get("user")},'
+            f" share_token={share_token is not None},"
+            f" session_token={session_token is not None}"
+        )
     return share_token_session_token_map
 
 
