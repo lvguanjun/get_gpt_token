@@ -12,6 +12,7 @@
 import time
 from queue import Queue
 
+import os
 import requests
 
 from custom_log import logger
@@ -29,19 +30,16 @@ class AccountInvalidException(Exception):
 
 
 def get_token(user_name, password) -> dict:
-    url = "https://ai.fakeopen.com/auth/login"
-
+    url = os.getenv("LOGIN_URL")
+    if not url:
+        raise Exception("no login url")
     payload = {
-        "username": user_name,
+        "email": user_name,
         "password": password,
     }
-
-    headers = {"Content-Type": "application/x-www-form-urlencoded"}
-
-    response = requests.request("POST", url, headers=headers, data=payload)
-
+    response = requests.request("POST", url, json=payload)
     if response.status_code == 200:
-        return response.json()
+        return response.json()["data"]
     if response.status_code == 500 and any(
         [
             "wrong email or password" in response.text,

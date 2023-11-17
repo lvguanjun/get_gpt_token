@@ -4,6 +4,7 @@ __pycache__
 # env
 .vscode
 .venv
+.env
 
 # log
 log.txt
