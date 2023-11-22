@@ -117,7 +117,7 @@ async def main():
     effective_tokens = await process_tokens(share_tokens)
     with open(effective_file, "w") as f:
         json.dump(effective_tokens, f)
-    with open(append_file, "w+") as f:
+    with open(append_file, "a") as f:
         f.write("\n".join(effective_tokens))
     pool_token = gen_pool_token(effective_tokens, POOL_TOKEN)
     print(pool_token)
