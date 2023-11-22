@@ -50,8 +50,7 @@ def gen_tokens_json_not_plus():
                 token.get("session_token"),
             ]
         ):
-            key = f"user-{index // 100 % 10}-{index // 10 % 10}-{index}"
-            tokens_json[key] = {
+            tokens_json[f"user{index:03}"] = {
                 "token": token["session_token"],
                 "shared": True,
                 "show_user_info": True,
@@ -67,7 +66,7 @@ def gen_tokens_json(share_tokens: list[str], share_token_session_token_map: dict
     tokens_json = {}
     for index, token in enumerate(share_tokens):
         if session_token := share_token_session_token_map.get(token):
-            tokens_json[f"user{index}"] = {
+            tokens_json[f"user{index:03}"] = {
                 "token": session_token,
                 "shared": True,
                 "show_user_info": True,
