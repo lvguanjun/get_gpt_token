@@ -70,6 +70,9 @@ async def check_chat(session, token) -> bool:
             print(f"rate limited, and sleep {rate_sleep_time}s")
             await asyncio.sleep(rate_sleep_time)
             return await check_chat(session, token)
+        if response.status not in [200, 429]:
+            print(await response.json())
+            return False
         return response.status == 200
 
 
