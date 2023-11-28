@@ -24,7 +24,6 @@ from redis_cache import (
     set_to_redis,
 )
 
-
 class AccountInvalidException(Exception):
     pass
 
@@ -34,12 +33,13 @@ def get_token(user_name, password) -> dict:
     if not url:
         raise Exception("no login url")
     payload = {
-        "email": user_name,
+        "username": user_name,
         "password": password,
     }
-    response = requests.request("POST", url, json=payload)
+    headeds = {"content-type": "application/x-www-form-urlencoded"}
+    response = requests.request("POST", url, data=payload, headers=headeds)
     if response.status_code == 200:
-        return response.json()["data"]
+        return response.json()
     if response.status_code == 500 and any(
         [
             "wrong email or password" in response.text,
