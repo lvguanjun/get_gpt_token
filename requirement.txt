@@ -1,4 +1,5 @@
 aiohttp==3.8.6
 PyJWT==2.8.0
+python-dotenv==1.0.0
 redis==5.0.1
 requests==2.31.0
