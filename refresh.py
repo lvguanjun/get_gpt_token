@@ -117,9 +117,11 @@ class FakeopenTokenRefresher(TokenRefresher):
         判断是否是因为修改密码导致的刷新失败
         ps: fakeopen的刷新接口返回太过简单，慎用来判断是否修改密码
         """
-        return (
-            response.status_code == 500
-            and "error refresh access token" in response.text
+        return response.status_code == 500 and any(
+            [
+                "error: RefreshAccessTokenError" in response.text,
+                "error refresh access token" in response.text,
+            ]
         )
 
 
