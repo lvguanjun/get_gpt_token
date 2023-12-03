@@ -13,7 +13,7 @@ import time
 
 import requests
 
-from config import PROXY, REFRESH_EXTRA_TIME
+from config import BASE_URL, PROXY, REFRESH_EXTRA_TIME
 from custom_log import logger
 from redis_cache import get_need_refresh_tokens, set_to_redis
 from session_refresh import session_refresh
@@ -107,7 +107,7 @@ class Auth0TokenRefresher(TokenRefresher):
 
 class FakeopenTokenRefresher(TokenRefresher):
     def __init__(self):
-        base_url = "https://ai.fakeopen.com/auth/refresh"
+        base_url = BASE_URL + "/api/auth/refresh"
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
         payload = {}
         super().__init__(base_url, headers, payload)

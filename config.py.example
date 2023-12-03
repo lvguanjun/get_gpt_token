@@ -46,3 +46,9 @@ SHARE_TOKEN_UNIQUE_NAME = "xxxx"
 
 # 需要更新的 pool token，为 None 则生成新的 pool token
 POOL_TOKEN = "pk-***"
+
+# 登录接口的url
+LOGIN_URL = "https://ai.fakeopen.com/api/login"
+
+# base_url，fakeopen全面关停，需要自建 pandora-next 的 proxy 模式
+BASE_URL = "https://ai.fakeopen.com/<proxy_api_prefix>"

@@ -9,7 +9,7 @@
 
 import requests
 
-from config import POOL_TOKEN, SHARE_TOKEN_UNIQUE_NAME
+from config import BASE_URL, POOL_TOKEN, SHARE_TOKEN_UNIQUE_NAME
 from custom_log import logger
 from redis_cache import get_all_token, set_to_redis
 
@@ -18,7 +18,7 @@ def get_share_token(token):
     if share_token := token.get("share_token"):
         return share_token
 
-    url = "https://ai.fakeopen.com/token/register"
+    url = BASE_URL + "/api/token/register"
 
     payload = {
         "unique_name": SHARE_TOKEN_UNIQUE_NAME,
@@ -45,7 +45,7 @@ def get_share_token(token):
 
 
 def check_share_token(share_token):
-    url = "https://ai.fakeopen.com/api/models"
+    url = BASE_URL + "/backend-api/models"
 
     headers = {"Authorization": f"Bearer {share_token}"}
 
@@ -92,7 +92,7 @@ def main(check_all: bool = False):
 
 
 def gen_pool_token(share_tokens: list, pool_token: str = None):
-    url = "https://ai.fakeopen.com/pool/update"
+    url = BASE_URL + "/api/pool/update"
 
     payload = {
         "pool_token": pool_token,

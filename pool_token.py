@@ -14,7 +14,7 @@ import json
 import aiohttp
 import requests
 
-from config import DATETIME_FORMAT, POOL_TOKEN
+from config import BASE_URL, DATETIME_FORMAT, POOL_TOKEN
 from custom_log import logger
 from redis_cache import redis_cli
 
@@ -44,7 +44,7 @@ def get_active_token(extra_time: int = 0) -> list:
 
 
 async def check_chat(session, token) -> bool:
-    url = "https://ai.fakeopen.com/v1/chat/completions"
+    url = BASE_URL + "/v1/chat/completions"
 
     rate_sleep_time = 5  # 触发限速后，sleep 5s
 
@@ -92,7 +92,7 @@ async def process_tokens(share_tokens):
 
 
 def gen_pool_token(share_tokens: list, pool_token: str = None):
-    url = "https://ai.fakeopen.com/pool/update"
+    url = BASE_URL + "/pool/update"
 
     payload = {
         "pool_token": pool_token,

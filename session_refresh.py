@@ -1,8 +1,10 @@
 import requests
 
+from config import BASE_URL
+
 
 def session_refresh(session_token: str) -> requests.Response:
-    url = "https://ai.fakeopen.com/auth/session"
+    url = BASE_URL + "/api/auth/session"
     headers = {"content-type": "application/x-www-form-urlencoded"}
     payload = {"session_token": session_token}
     response = requests.request("POST", url, headers=headers, data=payload)

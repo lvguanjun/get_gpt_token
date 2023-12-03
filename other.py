@@ -11,6 +11,7 @@ import json
 
 import requests
 
+from config import BASE_URL
 from consume_user import check_is_gpt4
 from pool_token import get_active_token
 from redis_cache import (
@@ -41,7 +42,7 @@ def batch_check_is_gpt4(share_tokens, show_true=False):
 
 
 def batch_check_invite(share_tokens):
-    url = "https://ai.fakeopen.com/api/referral/invites"
+    url = BASE_URL + "/backend-api/referral/invites"
     try:
         for token in share_tokens:
             headers = {"Authorization": f"Bearer {token}"}
@@ -87,7 +88,7 @@ def send_gpt3_to_redis2(share_token):
 
 
 def check_all_tools(token):
-    url = "https://ai.fakeopen.com/api/models"
+    url = BASE_URL + "/backend-api/models"
 
     headers = {"Authorization": f"Bearer {token}"}
 
@@ -103,7 +104,7 @@ def check_all_tools(token):
 
 
 def get_conversions(token: str, offest: int = 0, show_all: bool = False):
-    url = f"https://ai.fakeopen.com/api/conversations?offset={offest}"
+    url = BASE_URL + f"/backend-api/conversations?offset={offest}"
 
     limit = 50
 
@@ -124,7 +125,7 @@ def get_conversions(token: str, offest: int = 0, show_all: bool = False):
 
 
 def get_user_system_messages(token):
-    url = "https://ai.fakeopen.com/api/user_system_messages"
+    url = BASE_URL + "/backend-api/user_system_messages"
 
     headers = {"Authorization": f"Bearer {token}"}
 

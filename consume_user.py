@@ -9,12 +9,13 @@
 
 # -*- coding: utf-8 -*-
 
+import os
 import time
 from queue import Queue
 
-import os
 import requests
 
+from config import BASE_URL
 from custom_log import logger
 from redis_cache import (
     get_from_redis,
@@ -23,6 +24,7 @@ from redis_cache import (
     set_to_gpt3_redis,
     set_to_redis,
 )
+
 
 class AccountInvalidException(Exception):
     pass
@@ -52,7 +54,7 @@ def get_token(user_name, password) -> dict:
 
 
 def check_is_gpt4(token):
-    url = "https://ai.fakeopen.com/api/models"
+    url = BASE_URL + "/backend-api/models"
 
     headers = {"Authorization": f"Bearer {token}"}
 
