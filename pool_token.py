@@ -92,7 +92,7 @@ async def process_tokens(share_tokens):
 
 
 def gen_pool_token(share_tokens: list, pool_token: str = None):
-    url = BASE_URL + "/pool/update"
+    url = BASE_URL + "/api/pool/update"
 
     payload = {
         "pool_token": pool_token,
