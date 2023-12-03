@@ -10,13 +10,10 @@
 import threading
 from queue import Queue
 
-from dotenv import load_dotenv
-
 from consume_user import consume_user
 from product_user import product_user
 
 if __name__ == "__main__":
-    load_dotenv()
     # 请求限速6/min"
     sleep_time = 0
     file = "origin.txt"

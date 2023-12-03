@@ -15,7 +15,7 @@ from queue import Queue
 
 import requests
 
-from config import BASE_URL
+from config import BASE_URL, LOGIN_URL
 from custom_log import logger
 from redis_cache import (
     get_from_redis,
@@ -31,9 +31,7 @@ class AccountInvalidException(Exception):
 
 
 def get_token(user_name, password) -> dict:
-    url = os.getenv("LOGIN_URL")
-    if not url:
-        raise Exception("no login url")
+    url = LOGIN_URL
     payload = {
         "username": user_name,
         "password": password,
