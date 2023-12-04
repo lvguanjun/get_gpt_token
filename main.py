@@ -17,9 +17,10 @@ if __name__ == "__main__":
     # 请求限速6/min"
     sleep_time = 0
     file = "origin.txt"
+    max_consume = 10
     q = Queue()
     p_t = threading.Thread(target=product_user, args=(file, q))
-    c_t = threading.Thread(target=consume_user, args=(q, sleep_time))
+    c_t = threading.Thread(target=consume_user, args=(q, sleep_time, max_consume))
     p_t.start()
     c_t.start()
     p_t.join()

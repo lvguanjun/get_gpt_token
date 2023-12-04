@@ -69,8 +69,11 @@ def check_is_gpt4(token):
         raise Exception(f"{e=}")
 
 
-def consume_user(q: Queue, sleep_time: int = 0):
+def consume_user(q: Queue, sleep_time: int = 0, max_consume: int = 0):
+    size = 0
     while True:
+        if max_consume and size >= max_consume:
+            return
         user = q.get()
         if user is None:
             break
@@ -83,6 +86,7 @@ def consume_user(q: Queue, sleep_time: int = 0):
             continue
         try:
             res: dict = get_token(user_name, password)
+            size += 1
             if not check_is_gpt4(res["access_token"]):
                 set_to_gpt3_redis(f"{user_name}=={password}", res)
                 set_error_to_redis(f"{user_name}=={password}")
