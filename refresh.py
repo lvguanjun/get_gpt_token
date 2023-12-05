@@ -121,6 +121,7 @@ class FakeopenTokenRefresher(TokenRefresher):
             [
                 "error: RefreshAccessTokenError" in response.text,
                 "error refresh access token" in response.text,
+                "failed to refresh access token" in response.text,
             ]
         )
 
