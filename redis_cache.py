@@ -29,8 +29,8 @@ def set_to_gpt3_redis(key: str, value: dict):
     gpt3_redis_cli.set(key, value)
 
 
-def get_from_redis(key: str) -> Optional[dict]:
-    value = redis_cli.get(key)
+def get_from_redis(key: str, cli=redis_cli) -> Optional[dict]:
+    value = cli.get(key)
     if value is not None:
         value = json.loads(value)
         jwt_token = value["access_token"]

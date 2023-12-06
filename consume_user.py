@@ -23,6 +23,7 @@ from redis_cache import (
     set_error_to_redis,
     set_to_gpt3_redis,
     set_to_redis,
+    gpt3_redis_cli,
 )
 
 
@@ -83,6 +84,9 @@ def consume_user(q: Queue, sleep_time: int = 0, max_consume: int = 0):
             continue
         if get_from_redis(f"{user_name}=={password}") is not None:
             logger.info(f"{user_name} already in redis")
+            continue
+        if get_from_redis(f"{user_name}=={password}", gpt3_redis_cli) is not None:
+            logger.info(f"{user_name} already in gpt3 redis")
             continue
         try:
             res: dict = get_token(user_name, password)
