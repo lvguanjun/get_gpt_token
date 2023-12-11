@@ -65,6 +65,7 @@ def gen_tokens_json_not_plus():
 def gen_tokens_json(share_tokens: list[str], share_token_session_token_map: dict):
     tokens_json = {}
     for index, token in enumerate(share_tokens):
+        index += 1
         if session_token := share_token_session_token_map.get(token):
             tokens_json[f"user{index:03}"] = {
                 "token": session_token,
