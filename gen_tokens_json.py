@@ -81,6 +81,7 @@ if __name__ == "__main__":
     tokens_json_file = "tokens.json"
     with open(share_tokens_file) as f:
         share_tokens = json.load(f)
+        # share_tokens = [token.strip() for token in f.readlines()]
     share_token_session_token_map = get_share_token_session_token_map()
     tokens_json = gen_tokens_json(share_tokens, share_token_session_token_map)
     # tokens_json = gen_tokens_json_not_plus()
