@@ -94,6 +94,7 @@ def main(check_all: bool = False):
             cur_count += 1
             logger.info(f"get share token success, {cur_count=}")
         else:
+            logger.error(f"get share token failed, {token['user']=}")
             token["deactivated"] = True
             set_to_redis(token["user"], token)
             err_count += 1
