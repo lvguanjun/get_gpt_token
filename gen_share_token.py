@@ -31,7 +31,12 @@ def get_share_token(token):
 
     headers = {"Content-Type": "application/x-www-form-urlencoded"}
 
-    response = requests.request("POST", url, headers=headers, data=payload)
+    try:
+        response = requests.request("POST", url, headers=headers, data=payload)
+    except Exception as e:
+        logger.error(f"get share token exceptd, {e=}")
+        return None
+
     if response.status_code == 200:
         share_token = response.json()["token_key"]
         token["share_token"] = share_token
@@ -49,7 +54,11 @@ def check_share_token(share_token):
 
     headers = {"Authorization": f"Bearer {share_token}"}
 
-    response = requests.request("GET", url, headers=headers)
+    try:
+        response = requests.request("GET", url, headers=headers)
+    except Exception as e:
+        logger.error(f"check share token exceptd, {e=}")
+        return False
 
     if response.status_code == 200:
         return True
