@@ -88,9 +88,9 @@ def consume_user(q: Queue, sleep_time: int = 0, max_consume: int = 0):
         if get_from_redis(f"{user_name}=={password}", gpt3_redis_cli) is not None:
             logger.info(f"{user_name} already in gpt3 redis")
             continue
+        size += 1
         try:
             res: dict = get_token(user_name, password)
-            size += 1
             if not check_is_gpt4(res["access_token"]):
                 set_to_gpt3_redis(f"{user_name}=={password}", res)
                 set_error_to_redis(f"{user_name}=={password}")
