@@ -23,7 +23,7 @@ def get_share_token_session_token_map() -> dict[str, tuple[str, str]]:
             if session_token := token.get("session_token") or token.get(
                 "refresh_token"
             ):
-                user_name = token.get("name")
+                user_name = token["user"].split("@")[0]
                 share_token_session_token_map[share_token] = (user_name, session_token)
                 continue
         print(
@@ -51,7 +51,8 @@ def gen_tokens_json_not_plus():
                 token.get("session_token"),
             ]
         ):
-            tokens_json[token["name"]] = {
+            user_name = token["user"].split("@")[0]
+            tokens_json[user_name] = {
                 "token": token["session_token"],
                 "shared": True,
                 "show_user_info": True,
@@ -67,8 +68,8 @@ def gen_tokens_json(share_tokens: list[str], share_token_session_token_map: dict
     tokens_json = {}
     for index, token in enumerate(share_tokens):
         index += 1
-        user_name, session_token = share_token_session_token_map.get(token)
-        if user_name and session_token:
+        if user_info := share_token_session_token_map.get(token):
+            user_name, session_token = user_info
             tokens_json[f" {user_name}"] = {
                 "token": session_token,
                 "shared": True,
@@ -82,8 +83,8 @@ if __name__ == "__main__":
     share_tokens_file = "effective_tokens.txt"
     tokens_json_file = "tokens.json"
     with open(share_tokens_file) as f:
-        share_tokens = json.load(f)
-        # share_tokens = [token.strip() for token in f.readlines()]
+        # share_tokens = json.load(f)
+        share_tokens = [token.strip() for token in f.readlines()]
     share_token_session_token_map = get_share_token_session_token_map()
     tokens_json = gen_tokens_json(share_tokens, share_token_session_token_map)
     # tokens_json = gen_tokens_json_not_plus()

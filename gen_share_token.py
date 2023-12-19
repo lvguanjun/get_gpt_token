@@ -40,8 +40,8 @@ def get_share_token(token):
     if response.status_code == 200:
         share_token = response.json()["token_key"]
         token["share_token"] = share_token
-        if user_name := get_user_name(share_token):
-            token["name"] = user_name
+        # if user_name := get_user_name(share_token):
+        #     token["name"] = user_name
         set_to_redis(token["user"], token)
         return share_token
     else:
