@@ -40,6 +40,8 @@ def get_share_token(token):
     if response.status_code == 200:
         share_token = response.json()["token_key"]
         token["share_token"] = share_token
+        if user_name := get_user_name(share_token):
+            token["name"] = user_name
         set_to_redis(token["user"], token)
         return share_token
     else:
@@ -74,6 +76,23 @@ def check_share_token(share_token):
         f"check share token exceptd, {response.status_code=}, {response.text=}"
     )
     return False
+
+
+def get_user_name(share_token) -> str:
+    url = BASE_URL + "/backend-api/me"
+
+    headers = {"Authorization": f"Bearer {share_token}"}
+
+    try:
+        response = requests.request("GET", url, headers=headers)
+    except Exception as e:
+        logger.error(f"get user name exceptd, {e=}")
+        return None
+
+    if response.status_code == 200:
+        return response.json()["name"]
+    logger.error(f"get user name failed, {response.status_code=}, {response.text=}")
+    return None
 
 
 def main(check_all: bool = False):

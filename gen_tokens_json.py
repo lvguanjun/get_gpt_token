@@ -14,7 +14,7 @@ from config import DATETIME_FORMAT
 from redis_cache import gpt3_redis_cli, redis_cli
 
 
-def get_share_token_session_token_map():
+def get_share_token_session_token_map() -> dict[str, tuple[str, str]]:
     share_token_session_token_map = {}
     for user in redis_cli.keys("*==*"):
         token = redis_cli.get(user)
@@ -23,7 +23,8 @@ def get_share_token_session_token_map():
             if session_token := token.get("session_token") or token.get(
                 "refresh_token"
             ):
-                share_token_session_token_map[share_token] = session_token
+                user_name = token.get("name")
+                share_token_session_token_map[share_token] = (user_name, session_token)
                 continue
         print(
             f'invalid token: {token.get("user")},'
@@ -50,7 +51,7 @@ def gen_tokens_json_not_plus():
                 token.get("session_token"),
             ]
         ):
-            tokens_json[f"user{index:03}"] = {
+            tokens_json[token["name"]] = {
                 "token": token["session_token"],
                 "shared": True,
                 "show_user_info": True,
@@ -66,8 +67,9 @@ def gen_tokens_json(share_tokens: list[str], share_token_session_token_map: dict
     tokens_json = {}
     for index, token in enumerate(share_tokens):
         index += 1
-        if session_token := share_token_session_token_map.get(token):
-            tokens_json[f"user{index:03}"] = {
+        user_name, session_token = share_token_session_token_map.get(token)
+        if user_name and session_token:
+            tokens_json[f" {user_name}"] = {
                 "token": session_token,
                 "shared": True,
                 "show_user_info": True,
