@@ -28,6 +28,9 @@ def get_need_refresh_user() -> list:
         expire_time = datetime.datetime.strptime(expire_time, DATETIME_FORMAT)
         if datetime.datetime.now() > expire_time:
             continue
+        if redis_cli.sismember("error-user", user):
+            print(f"{user=} in error set")
+            continue
         if all(
             [
                 not token.get("change_password"),
