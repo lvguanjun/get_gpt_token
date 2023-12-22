@@ -22,6 +22,16 @@ def set_to_redis(key: str, value: dict):
     redis_cli.set(key, value)
 
 
+def update_and_add_to_redis(key: str, value: dict):
+    origin_value = redis_cli.get(key)
+    origin_value = json.loads(origin_value) if origin_value else {}
+    if "access_token" in value:
+        format_jwt_expired_time(value)
+    origin_value.update(value)
+    res = json.dumps(origin_value, cls=Encoder)
+    redis_cli.set(key, res)
+
+
 def set_to_gpt3_redis(key: str, value: dict):
     format_jwt_expired_time(value)
     value["user"] = key

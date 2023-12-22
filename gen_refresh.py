@@ -13,7 +13,7 @@ import json
 import requests
 
 from config import BASE_URL, DATETIME_FORMAT
-from redis_cache import redis_cli, set_to_redis
+from redis_cache import redis_cli, update_and_add_to_redis
 
 
 def get_need_refresh_user() -> list:
@@ -67,8 +67,9 @@ if __name__ == "__main__":
         if count >= max_count:
             break
         refresh_token = get_refresh_token(user)
+        # 打个日志，毕竟1000额度一次:D
+        print(f"{user=} {refresh_token=}")
         count += 1
         if refresh_token is None:
             continue
-        set_to_redis(user, refresh_token)
-        
+        update_and_add_to_redis(user, refresh_token)
