@@ -12,7 +12,8 @@ import json
 
 import requests
 
-from config import BASE_URL, DATETIME_FORMAT
+from config import BASE_URL, DATETIME_FORMAT, LOGIN_URL
+from custom_log import logger
 from redis_cache import redis_cli, update_and_add_to_redis
 
 
@@ -50,6 +51,14 @@ def get_refresh_token(user):
         "password": user.split("==")[1],
     }
     headeds = {"content-type": "application/x-www-form-urlencoded"}
+
+    # check login
+    response = requests.request("POST", LOGIN_URL, data=payload, headers=headeds)
+    if response.status_code != 200:
+        print(f"{user=} check login failed")
+        print(response.status_code, response.text)
+        return None
+
     response = requests.request("POST", url, data=payload, headers=headeds)
     if response.status_code == 200:
         return response.json()
@@ -67,9 +76,9 @@ if __name__ == "__main__":
         if count >= max_count:
             break
         refresh_token = get_refresh_token(user)
-        # 打个日志，毕竟1000额度一次:D
-        print(f"{user=} {refresh_token=}")
         count += 1
         if refresh_token is None:
             continue
+        # 打个日志，毕竟1000额度一次:D
+        logger.info(f"{user=} {refresh_token=}")
         update_and_add_to_redis(user, refresh_token)
