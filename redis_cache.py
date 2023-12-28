@@ -113,13 +113,13 @@ def get_survive_share_token(extra_time: int = 0) -> list:
     for user in redis_cli.keys("*==*"):
         token = redis_cli.get(user)
         token = json.loads(token)
-        expire_time = token["expired_time"]
-        expire_time = datetime.datetime.strptime(expire_time, DATETIME_FORMAT)
-        if (
-            datetime.datetime.now() + datetime.timedelta(seconds=extra_time)
-            > expire_time
-        ):
-            continue
+        # expire_time = token["expired_time"]
+        # expire_time = datetime.datetime.strptime(expire_time, DATETIME_FORMAT)
+        # if (
+        #     datetime.datetime.now() + datetime.timedelta(seconds=extra_time)
+        #     > expire_time
+        # ):
+        #     continue
         if all(
             [
                 not token.get("change_password"),
