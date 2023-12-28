@@ -37,6 +37,12 @@ def deal_4_line(line):
     return iter([(user, password)])
 
 
+@error_handler
+def deal_2_equal(line):
+    user, password = line.split("==", 1)
+    return iter([(user, password)])
+
+
 def product_user(file: str, q: Queue):
     processed = set()
     with open(file, "r") as f:
@@ -46,6 +52,12 @@ def product_user(file: str, q: Queue):
                 continue
             if "----" in line:
                 for item in deal_4_line(line):
+                    if item in processed:
+                        continue
+                    q.put(item)
+                    processed.add(item)
+            elif "==" in line:
+                for item in deal_2_equal(line):
                     if item in processed:
                         continue
                     q.put(item)
