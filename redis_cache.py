@@ -28,6 +28,8 @@ def update_and_add_to_redis(key: str, value: dict):
     if "access_token" in value:
         format_jwt_expired_time(value)
     origin_value.update(value)
+    # 去除值为None的键值对
+    origin_value = {k: v for k, v in origin_value.items() if v is not None}
     res = json.dumps(origin_value, cls=Encoder)
     redis_cli.set(key, res)
 
