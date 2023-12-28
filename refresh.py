@@ -61,10 +61,10 @@ class TokenRefresher:
             return None
 
     def refresh_user_token(self, user, token):
-        if refresh_token := token.get("refresh_token"):
-            update_token = self.get_new_token(refresh_token)
-        elif session_token := token.get("session_token"):
+        if session_token := token.get("session_token"):
             update_token = self.get_new_token_from_session(session_token)
+        elif refresh_token := token.get("refresh_token"):
+            update_token = self.get_new_token(refresh_token)
         else:
             logger.error(f"no refresh_token or session_token, {user=}")
             return

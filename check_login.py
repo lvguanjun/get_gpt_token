@@ -79,6 +79,7 @@ def check_login(user, is_expired):
         return False
     response = response.json()
     response["change_password"] = None
+    response["deactivated"] = None
     update_and_add_to_redis(user, response)
     print(f"{user=} check login success")
 

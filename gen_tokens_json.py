@@ -20,9 +20,7 @@ def get_share_token_session_token_map() -> dict[str, tuple[str, str]]:
         token = redis_cli.get(user)
         token = json.loads(token)
         if share_token := token.get("share_token"):
-            if session_token := token.get("session_token") or token.get(
-                "refresh_token"
-            ):
+            if session_token := token.get("session_token"):
                 user_name = token["user"].split("@")[0]
                 share_token_session_token_map[share_token] = (user_name, session_token)
                 continue
