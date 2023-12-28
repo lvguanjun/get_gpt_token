@@ -124,6 +124,7 @@ def get_survive_share_token(extra_time: int = 0) -> list:
             [
                 not token.get("change_password"),
                 not token.get("deactivated"),
+                # token.get("refresh_token"),
             ]
         ):
             survive_tokens.append(token["share_token"])
