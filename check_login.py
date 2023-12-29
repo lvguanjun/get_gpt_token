@@ -40,6 +40,8 @@ def get_need_refresh_user() -> list:
         else:
             is_expired = False
         if redis_cli.sismember("error-user", user):
+            # # 从 error-uesr 删除
+            # redis_cli.srem("error-user", user)
             print(f"{user=} in error set")
             continue
         if any(
