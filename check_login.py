@@ -69,6 +69,7 @@ def check_login(user, is_expired):
             print(f"{user=} wrong username or password")
             set_error_to_redis(user)
             if is_expired:
+                print(f"{user=} is expired, and delete")
                 redis_cli.delete(user)
             return False
         elif "been deleted or deactivated" in response_text:
