@@ -25,10 +25,11 @@ from config import DATETIME_FORMAT, LOGIN_URL
 from redis_cache import redis_cli, set_error_to_redis, update_and_add_to_redis
 
 
-def get_need_refresh_user() -> list:
+def get_need_check_user() -> list:
     """
-    获取存活但未有refresh_token的user
+    获取需要检查的用户
     """
+
     users = []
     for user in redis_cli.keys("*==*"):
         token = redis_cli.get(user)
@@ -88,7 +89,7 @@ def check_login(user, is_expired):
 
 
 if __name__ == "__main__":
-    users = get_need_refresh_user()
+    users = get_need_check_user()
     for user, is_expired in users:
         check_login(user, is_expired)
         # break
