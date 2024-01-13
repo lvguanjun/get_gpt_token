@@ -8,7 +8,7 @@
 """
 
 import threading
-from queue import Queue
+from collections import deque
 
 from consume_user import consume_user
 from product_user import product_user
@@ -18,7 +18,7 @@ if __name__ == "__main__":
     sleep_time = 0
     file = "origin.txt"
     max_consume = 10
-    q = Queue()
+    q = deque()
     p_t = threading.Thread(target=product_user, args=(file, q))
     c_t = threading.Thread(target=consume_user, args=(q, sleep_time, max_consume))
     p_t.start()
