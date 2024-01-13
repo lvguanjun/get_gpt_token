@@ -9,9 +9,9 @@
 
 # -*- coding: utf-8 -*-
 
-
+import os
 import time
-from collections import deque
+from queue import Queue
 
 import requests
 
@@ -19,11 +19,11 @@ from config import BASE_URL, LOGIN_URL
 from custom_log import logger
 from redis_cache import (
     get_from_redis,
-    gpt3_redis_cli,
     is_in_error_set,
     set_error_to_redis,
     set_to_gpt3_redis,
     set_to_redis,
+    gpt3_redis_cli,
 )
 
 
@@ -70,12 +70,12 @@ def check_is_gpt4(token):
         raise Exception(f"{e=}")
 
 
-def consume_user(q: deque, sleep_time: int = 0, max_consume: int = 0):
+def consume_user(q: Queue, sleep_time: int = 0, max_consume: int = 0):
     size = 0
     while True:
         if max_consume and size >= max_consume:
             return
-        user = q.pop()
+        user = q.get()
         if user is None:
             break
         user_name, password = user

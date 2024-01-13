@@ -9,7 +9,7 @@
 
 
 import json
-from collections import deque
+from queue import Queue
 
 from custom_log import logger
 
@@ -43,7 +43,7 @@ def deal_2_equal(line):
     return iter([(user, password)])
 
 
-def product_user(file: str, q: deque):
+def product_user(file: str, q: Queue):
     processed = set()
     with open(file, "r") as f:
         for line in f:
@@ -54,21 +54,21 @@ def product_user(file: str, q: deque):
                 for item in deal_4_line(line):
                     if item in processed:
                         continue
-                    q.append(item)
+                    q.put(item)
                     processed.add(item)
             elif "==" in line:
                 for item in deal_2_equal(line):
                     if item in processed:
                         continue
-                    q.append(item)
+                    q.put(item)
                     processed.add(item)
             else:
                 for item in deal_json(line):
                     if item in processed:
                         continue
-                    q.append(item)
+                    q.put(item)
                     processed.add(item)
-    q.appendleft(None)
+    q.put(None)
     logger.info("queue add None, end")
 
 
