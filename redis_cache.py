@@ -41,6 +41,18 @@ def set_to_gpt3_redis(key: str, value: dict):
     gpt3_redis_cli.set(key, value)
 
 
+def update_and_add_to_redis_gpt3(key: str, value: dict):
+    origin_value = gpt3_redis_cli.get(key)
+    origin_value = json.loads(origin_value) if origin_value else {}
+    if "access_token" in value:
+        format_jwt_expired_time(value)
+    origin_value.update(value)
+    # 去除值为None的键值对
+    origin_value = {k: v for k, v in origin_value.items() if v is not None}
+    res = json.dumps(origin_value, cls=Encoder)
+    gpt3_redis_cli.set(key, res)
+
+
 def get_from_redis(key: str, cli=redis_cli) -> Optional[dict]:
     value = cli.get(key)
     if value is not None:

@@ -14,7 +14,7 @@ import requests
 
 from config import BASE_URL
 from consume_user import check_is_gpt4
-from redis_cache import set_to_gpt3_redis, set_to_redis
+from redis_cache import update_and_add_to_redis, update_and_add_to_redis_gpt3
 from session_refresh import session_refresh
 
 
@@ -51,10 +51,10 @@ def check_session(session_token):
             is_gpt4 = check_is_gpt4(access_token)
             if is_gpt4:
                 print("add gpt4 to redis")
-                set_to_redis(user, token_info)
+                update_and_add_to_redis(user, token_info)
             else:
                 print("add gpt3 to redis")
-                set_to_gpt3_redis(user, token_info)
+                update_and_add_to_redis_gpt3(user, token_info)
         else:
             print(response.status_code, response.text)
 
