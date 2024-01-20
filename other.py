@@ -8,6 +8,7 @@
 """
 
 import json
+from concurrent.futures import ThreadPoolExecutor
 
 import requests
 
@@ -23,22 +24,27 @@ from redis_cache import (
 )
 
 
-def batch_check_is_gpt4(share_tokens, show_true=False):
-    for share_token in share_tokens:
-        try:
-            if not check_is_gpt4(share_token):
-                if show_true:
-                    print("false")
-                else:
-                    print("false", share_token)
+def _check_is_gpt4(share_token, show_true=False):
+    try:
+        if not check_is_gpt4(share_token):
+            if show_true:
+                print("false")
             else:
-                if show_true:
-                    print("true", share_token)
-                else:
-                    print("true")
-        except Exception as e:
-            print(e)
-            print(share_token, "exception")
+                print("false", share_token)
+        else:
+            if show_true:
+                print("true", share_token)
+            else:
+                print("true")
+    except Exception as e:
+        print(e)
+        print(share_token, "exception")
+
+
+def batch_check_is_gpt4(share_tokens, show_true=False):
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        for share_token in share_tokens:
+            executor.submit(_check_is_gpt4, share_token, show_true)
 
 
 def batch_check_invite(share_tokens):
@@ -151,6 +157,6 @@ if __name__ == "__main__":
     # for token in active_tokens:
     #     print(get_user_system_messages(token))
 
-    batch_check_is_gpt4(active_tokens)
+    batch_check_is_gpt4(active_tokens, show_true=True)
     # batch_check_invite(active_tokens)
     # send_gpt4_to_redis1("fk-uTT1JTWO8LkTl9HKK")

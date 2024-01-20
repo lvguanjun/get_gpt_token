@@ -11,6 +11,8 @@ import requests
 
 from config import BASE_URL, POOL_TOKEN, SHARE_TOKEN_UNIQUE_NAME
 from custom_log import logger
+
+from concurrent.futures import ThreadPoolExecutor
 from redis_cache import get_all_token, set_to_redis
 
 
@@ -119,6 +121,28 @@ def main(check_all: bool = False):
             err_count += 1
     return cur_count, err_count, share_tokens
 
+def worker(token, check_all: bool = False):
+    share_token = get_share_token(token)
+    if not share_token:
+        return
+    if not check_all and token.get("deactivated"):
+        return
+    if check_share_token(share_token):
+        if check_all and token.pop("deactivated", None):
+            set_to_redis(token["user"], token)
+        logger.info(f"Share token for {token['user']} is valid")
+    else:
+        logger.error(f"get share token failed, {token['user']=}")
+        token["deactivated"] = True
+        set_to_redis(token["user"], token)
+
+
+def main(check_all: bool = False):
+    tokens = get_all_token()
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        {executor.submit(worker, token, check_all) for token in tokens}
+    logger.info("All tasks are completed.")
+
 
 def gen_pool_token(share_tokens: list, pool_token: str = None):
     url = BASE_URL + "/api/pool/update"
@@ -141,7 +165,8 @@ def gen_pool_token(share_tokens: list, pool_token: str = None):
 
 
 if __name__ == "__main__":
-    cur_count, err_count, share_token = main()
-    # pool_token = gen_pool_token(share_token, POOL_TOKEN)
-    # print(f"{cur_count=}, {err_count=}, {pool_token=}")
-    print(f"{cur_count=}, {err_count=}, {share_token=}")
+    # cur_count, err_count, share_token = main()
+    # # pool_token = gen_pool_token(share_token, POOL_TOKEN)
+    # # print(f"{cur_count=}, {err_count=}, {pool_token=}")
+    # print(f"{cur_count=}, {err_count=}, {share_token=}")
+    main()

@@ -10,6 +10,7 @@
 import abc
 import json
 import time
+from concurrent.futures import ThreadPoolExecutor
 
 import requests
 
@@ -80,9 +81,10 @@ class TokenRefresher:
             logger.error(f"refresh token failed, {user=}")
 
     def refresh_token(self, sleep_time: int):
-        for user, token in get_need_refresh_tokens(REFRESH_EXTRA_TIME):
-            self.refresh_user_token(user, token)
-            time.sleep(sleep_time)
+        with ThreadPoolExecutor(max_workers=10) as executor:
+            for user, token in get_need_refresh_tokens(REFRESH_EXTRA_TIME):
+                executor.submit(self.refresh_user_token, user, token)
+                time.sleep(sleep_time)
 
 
 class Auth0TokenRefresher(TokenRefresher):
