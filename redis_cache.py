@@ -30,6 +30,7 @@ def update_and_add_to_redis(key: str, value: dict):
     origin_value.update(value)
     # 去除值为None的键值对
     origin_value = {k: v for k, v in origin_value.items() if v is not None}
+    origin_value["user"] = key
     res = json.dumps(origin_value, cls=Encoder)
     redis_cli.set(key, res)
 
@@ -49,6 +50,7 @@ def update_and_add_to_redis_gpt3(key: str, value: dict):
     origin_value.update(value)
     # 去除值为None的键值对
     origin_value = {k: v for k, v in origin_value.items() if v is not None}
+    origin_value["user"] = key
     res = json.dumps(origin_value, cls=Encoder)
     gpt3_redis_cli.set(key, res)
 

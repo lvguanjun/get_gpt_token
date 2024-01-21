@@ -42,8 +42,6 @@ def get_share_token(token):
     if response.status_code == 200:
         share_token = response.json()["token_key"]
         token["share_token"] = share_token
-        # if user_name := get_user_name(share_token):
-        #     token["name"] = user_name
         set_to_redis(token["user"], token)
         return share_token
     else:
@@ -97,30 +95,6 @@ def get_user_name(share_token) -> str:
     return None
 
 
-def main(check_all: bool = False):
-    share_tokens = []
-    cur_count, err_count = 0, 0
-    tokens = get_all_token()
-    for token in tokens:
-        share_token = get_share_token(token)
-        if not share_token:
-            continue
-        if not check_all and token.get("deactivated"):
-            err_count += 1
-            continue
-        if check_share_token(share_token):
-            if check_all and token.pop("deactivated", None):
-                set_to_redis(token["user"], token)
-            share_tokens.append(share_token)
-            cur_count += 1
-            logger.info(f"get share token success, {cur_count=}")
-        else:
-            logger.error(f"get share token failed, {token['user']=}")
-            token["deactivated"] = True
-            set_to_redis(token["user"], token)
-            err_count += 1
-    return cur_count, err_count, share_tokens
-
 def worker(token, check_all: bool = False):
     share_token = get_share_token(token)
     if not share_token:
@@ -130,7 +104,7 @@ def worker(token, check_all: bool = False):
     if check_share_token(share_token):
         if check_all and token.pop("deactivated", None):
             set_to_redis(token["user"], token)
-        logger.info(f"Share token for {token['user']} is valid")
+        logger.info(f"{share_token} is valid")
     else:
         logger.error(f"get share token failed, {token['user']=}")
         token["deactivated"] = True
@@ -140,7 +114,8 @@ def worker(token, check_all: bool = False):
 def main(check_all: bool = False):
     tokens = get_all_token()
     with ThreadPoolExecutor(max_workers=10) as executor:
-        {executor.submit(worker, token, check_all) for token in tokens}
+        for token in tokens:
+            executor.submit(worker, token, check_all)
     logger.info("All tasks are completed.")
 
 
