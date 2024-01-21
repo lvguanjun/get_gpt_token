@@ -14,12 +14,14 @@ from config import DATETIME_FORMAT
 from redis_cache import gpt3_redis_cli, redis_cli
 
 
-def gen_tokens_json(is_plus: bool = False):
+def gen_tokens_json(is_plus: bool = False, max_index: int = 100):
+    if max_index <= 0:
+        return {}
     _redis_cli = gpt3_redis_cli
     if is_plus:
         _redis_cli = redis_cli
     tokens_json = {}
-    index = 1
+    index = 0
     for user in _redis_cli.keys("*==*"):
         token = _redis_cli.get(user)
         token = json.loads(token)
@@ -34,6 +36,8 @@ def gen_tokens_json(is_plus: bool = False):
                 token.get("session_token"),
             ]
         ):
+            if index == max_index:
+                break
             user_name = token["user"].split("@")[0]
             key = user_name
             if is_plus:
@@ -45,14 +49,16 @@ def gen_tokens_json(is_plus: bool = False):
                 "plus": is_plus,
             }
             index += 1
-            if index == 101:
-                break
     return tokens_json
 
 
 if __name__ == "__main__":
     tokens_json_file = "tokens.json"
-    is_plus = True if input("is plus? (y/n): ") == "y" else False
-    tokens_json = gen_tokens_json(is_plus)
+    max_index = 100
+    plus_tokens = gen_tokens_json(is_plus=True)
+    not_plus_tokens = gen_tokens_json(
+        is_plus=False, max_index=max_index - len(plus_tokens)
+    )
+    tokens_json = {**plus_tokens, **not_plus_tokens}
     with open(tokens_json_file, "w") as f:
         json.dump(tokens_json, f, indent=4)
