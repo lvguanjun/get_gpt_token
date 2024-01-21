@@ -14,29 +14,14 @@ from config import DATETIME_FORMAT
 from redis_cache import gpt3_redis_cli, redis_cli
 
 
-def get_share_token_session_token_map() -> dict[str, tuple[str, str]]:
-    share_token_session_token_map = {}
-    for user in redis_cli.keys("*==*"):
-        token = redis_cli.get(user)
-        token = json.loads(token)
-        if share_token := token.get("share_token"):
-            if session_token := token.get("session_token"):
-                user_name = token["user"].split("@")[0]
-                share_token_session_token_map[share_token] = (user_name, session_token)
-                continue
-        print(
-            f'invalid token: {token.get("user")},'
-            f" share_token={share_token is not None},"
-            f" session_token={session_token is not None}"
-        )
-    return share_token_session_token_map
-
-
-def gen_tokens_json_not_plus():
+def gen_tokens_json(is_plus: bool = False):
+    _redis_cli = gpt3_redis_cli
+    if is_plus:
+        _redis_cli = redis_cli
     tokens_json = {}
     index = 1
-    for user in gpt3_redis_cli.keys("*==*"):
-        token = gpt3_redis_cli.get(user)
+    for user in _redis_cli.keys("*==*"):
+        token = _redis_cli.get(user)
         token = json.loads(token)
         expire_time = token["expired_time"]
         expire_time = datetime.datetime.strptime(expire_time, DATETIME_FORMAT)
@@ -50,11 +35,14 @@ def gen_tokens_json_not_plus():
             ]
         ):
             user_name = token["user"].split("@")[0]
-            tokens_json[user_name] = {
+            key = user_name
+            if is_plus:
+                key = f" {user_name}"
+            tokens_json[key] = {
                 "token": token["session_token"],
                 "shared": True,
                 "show_user_info": True,
-                "plus": False,
+                "plus": is_plus,
             }
             index += 1
             if index == 101:
@@ -62,29 +50,9 @@ def gen_tokens_json_not_plus():
     return tokens_json
 
 
-def gen_tokens_json(share_tokens: list[str], share_token_session_token_map: dict):
-    tokens_json = {}
-    for index, token in enumerate(share_tokens):
-        index += 1
-        if user_info := share_token_session_token_map.get(token):
-            user_name, session_token = user_info
-            tokens_json[f" {user_name}"] = {
-                "token": session_token,
-                "shared": True,
-                "show_user_info": True,
-                "plus": True,
-            }
-    return tokens_json
-
-
 if __name__ == "__main__":
-    share_tokens_file = "effective_tokens.txt"
     tokens_json_file = "tokens.json"
-    with open(share_tokens_file) as f:
-        # share_tokens = json.load(f)
-        share_tokens = [token.strip() for token in f.readlines()]
-    share_token_session_token_map = get_share_token_session_token_map()
-    tokens_json = gen_tokens_json(share_tokens, share_token_session_token_map)
-    # tokens_json = gen_tokens_json_not_plus()
+    is_plus = True if input("is plus? (y/n): ") == "y" else False
+    tokens_json = gen_tokens_json(is_plus)
     with open(tokens_json_file, "w") as f:
         json.dump(tokens_json, f, indent=4)
